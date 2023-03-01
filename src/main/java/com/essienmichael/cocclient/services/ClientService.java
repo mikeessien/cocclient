@@ -151,7 +151,7 @@ public class ClientService {
         return LocalDate.parse(date);
     }
 
-    private Client getClientByEmail(String email){
+    public Client getClientByEmail(String email){
         Optional<Client> foundClient = clientRepo.findByEmail(email).stream().findFirst();
 
         if (foundClient.isPresent()) {
