@@ -22,17 +22,12 @@ import java.util.*;
 public class ClientService {
 
     private final ClientRepo clientRepo;
-    private final RoleRepo roleRepo;
-    private final DepartmentRepo departmentRepo;
+    private final RoleService roleService;
+    private final DepartmentService departmentService;
     private final PasswordEncoder passwordEncoder;
 
     public List getAllClients() {
         return clientRepo.findAll();
-    }
-
-    public String saveClient(Client client) {
-        clientRepo.save(client);
-        return "saved";
     }
 
     public Client registerClient(ClientRequest clientRequest) {
@@ -40,7 +35,7 @@ public class ClientService {
             throw new ClientBadRequestException("Client already exists");
         }
 
-        Role role = getRole(clientRequest.getRole());
+        Role role = roleService.getRoleByRoleName(clientRequest.getRole());
 
         String encoded_Password = this.passwordEncoder.encode(clientRequest.getPassword());
 
@@ -82,9 +77,9 @@ public class ClientService {
         String encoded_Password = this.passwordEncoder.encode(clientRequest.getPassword());
 
         Set<Department> department = new HashSet<>();
-        clientRequest.getDepartmentName().forEach(departments -> department.add(changeStringToDepartment(departments)));
+        clientRequest.getDepartmentName().forEach(departments -> department.add(departmentService.changeStringToDepartment(departments)));
 
-        client.setRole(getRole(clientRequest.getRole()));
+        client.setRole(roleService.getRoleByRoleName(clientRequest.getRole()));
         client.setFirstName(clientRequest.getFirstName());
         client.setLastName(clientRequest.getLastName());
         client.setEmail(clientRequest.getEmail());
@@ -97,13 +92,13 @@ public class ClientService {
     public Client changeClientUserRoleToAdmin(AdminRoleRequest adminRoleRequest) {
         Client client = getClientByEmail(adminRoleRequest.getEmail());
 
-        client.setRole(getRole(adminRoleRequest.getRole()));
+        client.setRole(roleService.getRoleByRoleName(adminRoleRequest.getRole()));
 
         if (adminRoleRequest.getDepartments().isEmpty()) {
             throw new ClientBadRequestException("Administrators must have at least 1 department");
         }
 
-        adminRoleRequest.getDepartments().forEach(departments -> client.getDepartment().add(changeStringToDepartment(departments)));
+        adminRoleRequest.getDepartments().forEach(departments -> client.getDepartment().add(departmentService.changeStringToDepartment(departments)));
 
         clientRepo.save(client);
 
@@ -113,7 +108,7 @@ public class ClientService {
     public Client changeClientAdminRoleToUser(UserRoleRequest userRoleRequest) {
         Client client = getClientByEmail(userRoleRequest.getEmail());
 
-        client.setRole(getRole(userRoleRequest.getRole()));
+        client.setRole(roleService.getRoleByRoleName(userRoleRequest.getRole()));
         client.setDepartment(null);
 
         return clientRepo.save(client);
@@ -139,14 +134,14 @@ public class ClientService {
         Client client = getClientByEmail(deleteClientDepartmentRequest.getClient());
         Client adminClient = getClientByEmail(deleteClientDepartmentRequest.getAdministrator());
 
-        deleteClientDepartmentRequest.getDepartments().forEach(department -> client.getDepartment().remove(changeStringToDepartment(department)));
+        deleteClientDepartmentRequest.getDepartments().forEach(department -> client.getDepartment().remove(departmentService.changeStringToDepartment(department)));
 
         if (!adminClient.getRole().getRoleName().equalsIgnoreCase("Admin")) {
             throw new ClientBadRequestException("Account is not an Admin Account");
         }
 
         if (client.getDepartment().isEmpty()) {
-            client.setRole(getRole("User"));
+            client.setRole(roleService.getRoleByRoleName("User"));
         }
 
         return clientRepo.save(client);
@@ -154,19 +149,6 @@ public class ClientService {
 
     private LocalDate formatDate(String date) {
         return LocalDate.parse(date);
-    }
-
-    private Department changeStringToDepartment(String department) {
-        Department dept = new Department();
-        Optional<Department> foundDepartment = departmentRepo.findByDepartmentName(department).stream().findFirst();
-
-        if (foundDepartment.isPresent()) {
-            dept = foundDepartment.get();
-        } else {
-            dept.setDepartmentName(department);
-        }
-
-        return dept;
     }
 
     private Client getClientByEmail(String email){
@@ -181,15 +163,5 @@ public class ClientService {
 
     private Boolean ifAccountExists(String email){
         return clientRepo.findByEmail(email).stream().findFirst().isPresent() ? true : false;
-    }
-
-    private Role getRole(String role){
-        Optional<Role> role1 = roleRepo.findAll().stream().filter(__ -> __.getRoleName().equalsIgnoreCase(role)).findFirst();
-
-        if (role1.isPresent()) {
-            return role1.get();
-        } else {
-            throw new RuntimeException("Role does not exist");
-        }
     }
 }

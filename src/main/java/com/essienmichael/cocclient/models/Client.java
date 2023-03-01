@@ -1,6 +1,7 @@
 package com.essienmichael.cocclient.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -11,7 +12,6 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@ToString
 @Getter
 @Setter
 @NoArgsConstructor
@@ -42,6 +42,7 @@ public class Client {
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
+    @JsonIgnoreProperties("client")
     private Role role;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -50,6 +51,6 @@ public class Client {
             joinColumns = @JoinColumn(name = "client_id", referencedColumnName = "clientId"),
             inverseJoinColumns = @JoinColumn(name = "department_id", referencedColumnName = "departmentId")
     )
-    @JsonManagedReference
+    @JsonIgnoreProperties("clients")
     private Set<Department> department;
 }

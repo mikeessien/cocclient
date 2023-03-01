@@ -1,9 +1,11 @@
 package com.essienmichael.cocclient.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.Set;
@@ -19,6 +21,6 @@ public class Department {
     private String status;
 
     @ManyToMany(mappedBy = "department", fetch = FetchType.EAGER)
-    @JsonBackReference
+    @JsonIgnoreProperties("department")
     Set<Client> clients;
 }

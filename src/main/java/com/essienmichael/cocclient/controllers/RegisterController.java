@@ -74,21 +74,7 @@ public class RegisterController {
 //
 //        roleService.saveRole(userrole);
 //        roleService.saveRole(adminrole);
-//
-//        Client client = new Client();
-//        client.setFirstName("michael");
-//        client.setLastName("essien");
-//        client.setEmail("essienmichale@gmail.com");
-//        client.setDob(formatDate("2021-04-02"));
-//        client.setPassword("prototype");
-//        client.setRole(adminrole);
-//
-//        clientService.saveClient(client);
 
         return ResponseEntity.ok(clientService.getAllClients());
-    }
-
-    private LocalDate formatDate(String date){
-        return LocalDate.parse(date);
     }
 }

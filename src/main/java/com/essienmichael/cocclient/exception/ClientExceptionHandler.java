@@ -33,7 +33,7 @@ public class ClientExceptionHandler {
     }
 
     @ExceptionHandler(value = {ClientInvalidPasswordException.class})
-    public ResponseEntity<ClientException> ClientInvalidPasswordException(ClientInvalidPasswordException clientInvalidPasswordException){
+    public ResponseEntity<ClientException> handleClientInvalidPasswordException(ClientInvalidPasswordException clientInvalidPasswordException){
         ClientException clientException = new ClientException(
                 clientInvalidPasswordException.getMessage(),
                 HttpStatus.BAD_REQUEST,
@@ -41,5 +41,27 @@ public class ClientExceptionHandler {
         );
 
         return new ResponseEntity<>(clientException, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {RoleNotFoundException.class})
+    public ResponseEntity<ClientException> handleRoleNotFoundException(RoleNotFoundException roleNotFoundException){
+        ClientException clientException = new ClientException(
+                roleNotFoundException.getMessage(),
+                HttpStatus.NOT_FOUND,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+
+        return new ResponseEntity<>(clientException, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = {DepartmentNotFoundException.class})
+    public ResponseEntity<ClientException> handleDepartmentNotFoundException(DepartmentNotFoundException departmentNotFoundException){
+        ClientException clientException = new ClientException(
+                departmentNotFoundException.getMessage(),
+                HttpStatus.NOT_FOUND,
+                ZonedDateTime.now(ZoneId.of("Z"))
+        );
+
+        return new ResponseEntity<>(clientException, HttpStatus.NOT_FOUND);
     }
 }
