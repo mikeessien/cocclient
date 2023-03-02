@@ -1,4 +1,4 @@
-package com.essienmichael.cocclient.dto;
+package com.essienmichael.cocclient.dto.requests;
 
 import lombok.Data;
 

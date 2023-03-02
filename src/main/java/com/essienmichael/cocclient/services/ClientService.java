@@ -1,9 +1,8 @@
 package com.essienmichael.cocclient.services;
 
 import com.essienmichael.cocclient.Repositories.ClientRepo;
-import com.essienmichael.cocclient.Repositories.DepartmentRepo;
-import com.essienmichael.cocclient.Repositories.RoleRepo;
-import com.essienmichael.cocclient.dto.*;
+import com.essienmichael.cocclient.dto.requests.*;
+import com.essienmichael.cocclient.dto.response.ClientResponse;
 import com.essienmichael.cocclient.exception.ClientBadRequestException;
 import com.essienmichael.cocclient.exception.ClientInvalidPasswordException;
 import com.essienmichael.cocclient.exception.ClientNotFoundException;
